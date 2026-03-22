@@ -5,8 +5,6 @@ from selenium.webdriver.chrome.options import Options
 @pytest.fixture(scope='function')
 def fill_registration_form():
     options = Options()
-    options.add_argument("--incognito")
-    options.add_argument("--start-maximized")
     driver = webdriver.Remote(
        command_executor="https://user1:1234@ru.selenoid.autotests.cloud/wd/hub",
        options=options
