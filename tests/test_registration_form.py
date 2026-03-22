@@ -1,58 +1,66 @@
 import allure
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from pages.registration_page import RegistrationPage
+from models.user import User
 
 
 @allure.title("Successful fill form")
 def test_successful(setup_browser):
     driver = setup_browser
-    first_name = "Jane"
-    last_name = "Doe"
 
-    with allure.step("Open registrations form"):
-        driver.get("https://demoqa.com/automation-practice-form")
-        wrapper = driver.find_element(By.CSS_SELECTOR, ".practice-form-wrapper")
-        assert "Student Registration Form" in wrapper.text
-        #driver.execute_script("document.querySelector('footer').remove()")
-        #driver.execute_script("document.querySelector('#fixedban').remove()")
-        # Remove any modal/overlay that might block clicks (e.g. ads, cookie banner)
-        driver.execute_script("document.querySelectorAll('.modal.show, [role=dialog]').forEach(el => el.remove());")
+    user = User(
+        first_name="Jane",
+        last_name="Doe",
+        email="JaneD@example.com",
+        gender="Other",
+        mobile="1231231230",
+        subjects=["Physics"],
+        hobbies=["Sports"],
+        picture="test.jpg",
+        address="Ulitsa Pushkina 1",
+        state="NCR",
+        city="Delhi"
+    )
 
-    with allure.step("Fill form"):
-        driver.find_element(By.CSS_SELECTOR, "#firstName").send_keys(first_name)
-        driver.find_element(By.CSS_SELECTOR, "#lastName").send_keys(last_name)
-        driver.find_element(By.CSS_SELECTOR, "#userEmail").send_keys("JaneD@example.com")
-        driver.find_element(By.CSS_SELECTOR, "#genterWrapper").find_element(
-            By.XPATH, ".//*[text()='Other']"
-        ).click()
-        driver.find_element(By.CSS_SELECTOR, "#userNumber").send_keys("1231231230")
-        driver.find_element(By.CSS_SELECTOR, "#subjectsInput").send_keys("Physics")
-        driver.find_element(By.CSS_SELECTOR, "#subjectsInput").send_keys(Keys.ENTER)
-        sports_label = driver.find_element(By.CSS_SELECTOR, "#hobbiesWrapper").find_element(
-            By.XPATH, ".//*[text()='Sports']"
-        )
-        driver.execute_script("arguments[0].scrollIntoView({block: 'center'});", sports_label)
-        sports_clickable = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, "//*[@id='hobbiesWrapper']//*[text()='Sports']"))
-        )
-        driver.execute_script("arguments[0].click();", sports_clickable)
-        driver.find_element(By.CSS_SELECTOR, "#currentAddress").send_keys("Ulitsa Pushkina 1")
-        driver.find_element(By.CSS_SELECTOR, "#state").click()
-        ncr = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, "//*[@id='stateCity-wrapper']//*[text()='NCR']"))
-        )
-        driver.execute_script("arguments[0].click();", ncr)
-        driver.find_element(By.CSS_SELECTOR, "#city").click()
-        delhi = WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.XPATH, "//*[@id='stateCity-wrapper']//*[text()='Delhi']"))
-        )
-        driver.execute_script("arguments[0].click();", delhi)
-        driver.find_element(By.CSS_SELECTOR, "#submit").click()
+    page = RegistrationPage(driver)
 
-    with allure.step("Check form results"):
-        title = WebDriverWait(driver, 10).until(
-            EC.visibility_of_element_located((By.CSS_SELECTOR, "#example-modal-sizes-title-lg"))
-        )
-        assert "Thanks for submitting the form" in title.text
+    with allure.step("Open registration form"):
+        page.open()
+
+    with allure.step("Fill first name"):
+        page.fill_first_name(user.first_name)
+
+    with allure.step("Fill last name"):
+        page.fill_last_name(user.last_name)
+
+    with allure.step("Fill email"):
+        page.fill_email(user.email)
+
+    with allure.step("Select gender"):
+        page.select_gender(user.gender)
+
+    with allure.step("Fill mobile number"):
+        page.fill_mobile(user.mobile)
+
+    with allure.step("Fill subjects"):
+        page.fill_subjects(user.subjects)
+
+    with allure.step("Select hobbies"):
+        page.select_hobbies(user.hobbies)
+
+    with allure.step("Upload picture"):
+        page.upload_picture(user.picture)
+
+    with allure.step("Fill current address"):
+        page.fill_address(user.address)
+
+    with allure.step("Select state"):
+        page.select_state(user.state)
+
+    with allure.step("Select city"):
+        page.select_city(user.city)
+
+    with allure.step("Submit form"):
+        page.submit()
+
+    with allure.step("Verify success modal"):
+        page.should_have_success_modal()
