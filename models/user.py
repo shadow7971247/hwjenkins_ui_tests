@@ -11,6 +11,7 @@ class User:
     mobile: str
     subjects: List[str]
     hobbies: List[str]
+    picture: str
     address: str
     state: str
     city: str

@@ -1,3 +1,5 @@
+from pathlib import Path
+from selene import browser
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -53,6 +55,12 @@ class RegistrationPage:
                 EC.element_to_be_clickable((By.XPATH, f"//*[@id='hobbiesWrapper']//*[text()='{hobby}']"))
             )
             self.driver.execute_script("arguments[0].click();", clickable)
+        return self
+
+    def upload_picture(self, file_name: str) -> "RegistrationPage":
+        file_path = Path(__file__).parent.parent / "resources" / file_name
+        file_input = self.driver.find_element(By.CSS_SELECTOR, "#uploadPicture")
+        file_input.send_keys(str(file_path.resolve()))
         return self
 
     def fill_address(self, value: str) -> "RegistrationPage":

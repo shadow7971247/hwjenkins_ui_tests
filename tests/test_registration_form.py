@@ -15,6 +15,7 @@ def test_successful(setup_browser):
         mobile="1231231230",
         subjects=["Physics"],
         hobbies=["Sports"],
+        picture="test.jpg",
         address="Ulitsa Pushkina 1",
         state="NCR",
         city="Delhi"
@@ -45,6 +46,9 @@ def test_successful(setup_browser):
 
     with allure.step("Select hobbies"):
         page.select_hobbies(user.hobbies)
+
+    with allure.step("Upload picture"):
+        page.upload_picture(user.picture)
 
     with allure.step("Fill current address"):
         page.fill_address(user.address)
