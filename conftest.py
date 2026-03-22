@@ -3,7 +3,7 @@ from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 
 @pytest.fixture(scope='function')
-def setup_browser():
+def fill_registration_form():
     options = Options()
     options.add_argument("--incognito")
     options.add_argument("--start-maximized")
